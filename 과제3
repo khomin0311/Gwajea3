@@ -1,0 +1,81 @@
+#include <iostream> // 표준 입출력 사용
+#include <string>   // 문자열 타입을 위한 헤더 포함
+
+// 템플릿을 이용해 타입에 독립적인 컨테이너 클래스 구현
+template <typename T>
+class SimpleVector {
+private:
+    T* data;                // 동적 배열을 위한 포인터
+    int currentSize;        // 현재 원소 개수
+    int currentCapacity;    // 배열 용량 (최대 저장 가능한 원소 개수)
+
+public:
+    // 생성자: 기본 값으로 용량을 10으로 설정
+    SimpleVector(int capacity = 10)
+        : currentSize(0), currentCapacity(capacity) {
+        data = new T[currentCapacity]; // 동적 메모리 할당
+    }
+
+    // 소멸자: 동적 메모리 해제
+    ~SimpleVector() {
+        delete[] data;
+    }
+
+    // 배열 끝에 원소 추가 (push_back)
+    // 배열이 가득 찬 경우 추가하지 않음
+    void push_back(const T& value) {
+        if (currentSize < currentCapacity) {
+            data[currentSize++] = value; // 현재 인덱스에 값 추가 후 크기 증가
+        }
+        else {
+            // 배열 용량 초과 시 경고 메시지 출력
+            std::cout << "Array is full. Cannot push_back " << value << std::endl;
+        }
+    }
+
+    // 배열 끝에서 원소 제거 (pop_back)
+    // 배열이 비어 있는 경우 아무 작업도 수행하지 않음
+    void pop_back() {
+        if (currentSize > 0) {
+            --currentSize; // 마지막 원소 제거
+        }
+        else {
+            // 배열 비어있음 경고 메시지 출력
+            std::cout << "Array is empty. Cannot pop_back." << std::endl;
+        }
+    }
+
+    // 현재 원소 개수 반환
+    int size() const {
+        return currentSize;
+    }
+
+    // 배열 용량 반환
+    int capacity() const {
+        return currentCapacity;
+    }
+};
+
+int main() {
+    // SimpleVector 테스트
+    SimpleVector<int> sv(5); // 크기 5의 SimpleVector 생성
+    std::cout << "Testing SimpleVector push_back:" << std::endl;
+    for (int i = 0; i < 7; ++i) {
+        sv.push_back(i);
+        std::cout << "Pushed " << i << ", Size: " << sv.size() << ", Capacity: " << sv.capacity() << std::endl;
+    }
+
+    std::cout << "\nTesting SimpleVector pop_back:" << std::endl;
+    for (int i = 0; i < 7; ++i) {
+        sv.pop_back();
+        std::cout << "Popped an element, Size: " << sv.size() << ", Capacity: " << sv.capacity() << std::endl;
+    }
+
+    // 문자열 타입 테스트
+    SimpleVector<std::string> sv_str(3); // 크기 3의 SimpleVector 생성
+    sv_str.push_back("Hello");
+    sv_str.push_back("World");
+    std::cout << "\nString Vector: Size = " << sv_str.size() << ", Capacity = " << sv_str.capacity() << std::endl;
+
+    return 0;
+}
